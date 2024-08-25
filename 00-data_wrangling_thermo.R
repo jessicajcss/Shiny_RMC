@@ -37,6 +37,7 @@
 ### Checking for Data integrity ----
 
 library(tidyverse)
+library(dplyr)
 
 devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-preprocessing_thermo_insitu_data.R")
 
@@ -87,18 +88,18 @@ remove_outlier <- function(dataframe, columns = names(dataframe)) {
 #### UPLOAD DATA THERMO ----
 
 data_thermo <- data_thermo %>%
-  mutate(date = ymd_hms(date, tz = "America/Sao_Paulo"))
+  mutate(date = force_tz(date, tz = "America/Sao_Paulo"))
 
-summary(data_thermo)
 
 
 ### WORKING THERMO DATA ----
 
 # A remoção de outliers consistiu em remoção das leituras abaixo do percentil de 5% e acima do percentil de 95%.
 
+library(tidyverse)
 
 data_thermo <- data_thermo %>%
-  group_by(Cidade) %>%
+  dplyr::group_by(Cidade) %>%
   remove_outlier(., c('SO2', 'NO2', 'O3', 'CO', 'PM2.5','PM10'))
 
 
@@ -107,27 +108,34 @@ data_thermo <- data_thermo %>%
 
 # hourly data
 
-library(tidyverse)
 
 x <- 12 # data available x times per hour
 h <- 1 # aggregate to every h hours
 # aggregation puts NA if data has not x valid values per hour
 #data_thermo$date <- as.POSIXct(strptime(data_thermo$date, '%Y-%m-%d %H:%M:%S'))
 
+missing_dataagg <- data_thermo %>%
+  mutate(Cidade = as.factor(Cidade)) %>%
+  group_by(date = floor_date(date, '1 hour')) %>%
+  group_by(Cidade, date) %>%
+  summarise_all(funs(sum(!is.na(.))))
+
+
+# which ones are missing >= 10 hours of data
+too_many_missing <- missing_dataagg %>%
+  filter(PM2.5 < x/2) %>%
+  mutate(LocalTime = paste(Cidade, date, sep = " "))
+
+# remove missing data
 dataagg <- data_thermo %>%
   mutate(Cidade = as.factor(Cidade)) %>%
-  aggregate(list(data_thermo[["Cidade"]], t = cut(data_thermo[["date"]],
-                                                 paste(h,"hours"))),
-            function(z) ifelse(length(z)<x/2,NA,mean(z,na.rm=T))) # if less than half of values with data, NA, if not, mean of those values // https://stackoverflow.com/questions/21937030/how-to-get-na-returned-from-r-aggregate-over-na-data
-
-
-dataagg <- dataagg %>%
-  mutate(date = ifelse(str_detect(t, ":00"),
-                       as.character(t),
-                       paste(as.character(t), "00:00:00", sep = " "))) %>%
-  mutate(date = ymd_hms(date, tz = "America/Sao_Paulo"),
-         Cidade = Group.1) %>%
-  dplyr::select(-t, -Group.1) %>% unique()
+  group_by(date = floor_date(date, '1 hour')) %>%
+  mutate(LocalTime = paste(Cidade, date, sep = " ")) %>%
+  filter(!(LocalTime %in% too_many_missing$LocalTime)) %>%
+  dplyr::select(-LocalTime) %>%
+  group_by(Cidade, date) %>%
+  summarise(across(where(is.numeric), ~ mean(.x, na.rm = TRUE))) %>%
+  unique()
 
 
 
@@ -149,36 +157,34 @@ dataaggfinal <- merge(dataagg, tdf3, by = c("Cidade", "date"), all.y = T)
 rm(tdf, tdf2, tdf3)
 
 # days with missing values
-tz(dataaggfinal$date)
 missing <- dataaggfinal %>%
-  mutate(date2 = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%Y-%m-%d"))) %>%
-  group_by(Cidade, date2) %>%
-  summarise(num_missing = sum(is.na(PM2.5))) %>%
-  filter(num_missing > 0) %>%
-  arrange(desc(num_missing)) %>%
-  mutate(date2 = force_tz(as.POSIXct(date2), tz = "America/Sao_Paulo"))
-
-tz(missing$date2)
+  mutate(datepaste = as.Date(date)) %>%
+  select(Cidade, datepaste, PM2.5) %>%
+  dplyr::group_by(Cidade, datepaste) %>%
+  summarise_all(funs(sum(!is.na(.)))) %>%
+  filter(PM2.5 > 0) %>%
+  arrange(desc(PM2.5))
 
 # which ones are missing >= 10 hours of data
 too_many_missing <- missing %>%
-  filter(num_missing >= 10) %>%
-  mutate(LocalTime = paste(Cidade, date2, sep = " "))
+  filter(PM2.5 >= 10) %>%
+  mutate(LocalTime = paste(Cidade, datepaste, sep = " "))
 
 # remove missing data
 dataaggfinal <- dataaggfinal %>%
-  mutate(date2 = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%Y-%m-%d")),
-         date2 = force_tz(as.POSIXct(date2), tz = "America/Sao_Paulo"),
-         LocalTime = paste(Cidade, date2, sep = " ")) %>%
+  mutate(LocalTime = paste(Cidade, date, sep = " ")) %>%
   filter(!(LocalTime %in% too_many_missing$LocalTime)) %>%
-  dplyr::select(-date2)
+  dplyr::select(-LocalTime)
 
 # mean imputation for the others
+detach(package:plyr)
+
 avg_hour <- dataaggfinal %>%
   mutate(hour = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%H:%M:%S")),
-         hour = hms(hour)) %>%
-  group_by(Cidade, hour) %>%
-  summarise(RHavg = mean(rh_sensor, na.rm = TRUE),
+         hour = hms(hour),
+         Cidade = as.factor(Cidade)) %>%
+  dplyr::group_by(Cidade, hour) %>%
+  summarize(RHavg = mean(rh_sensor, na.rm = TRUE),
             COavg = mean(CO, na.rm = TRUE),
             O3avg = mean(O3, na.rm = TRUE),
             NO2avg = mean(NO2, na.rm = TRUE),
@@ -200,8 +206,8 @@ dataaggfinal <- dataaggfinal %>%
   dplyr::select(Cidade, date, SO2, NO2, O3, CO, PM2.5, PM10, rh_sensor)
 
 
-
-
+dataaggfinal[, c(3:9)] <- data.frame(sapply(dataaggfinal[, c(3:9)],
+                                  function(x) ifelse(is.nan(x), NA, x)))
 
 #################### TO COMPARE WITH WHO, 2021 AQG
 

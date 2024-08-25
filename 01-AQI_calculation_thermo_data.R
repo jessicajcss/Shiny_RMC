@@ -253,7 +253,7 @@ library(zoo)
 w <- 8
 air_quality_data <- data %>%
   select(Cidade, date, SO2, NO2, O3, CO, PM2.5, PM10) %>%
-  melt(id = c("Cidade", "date")) %>%
+  gather(key = variable, value = value, -c("Cidade", "date")) %>%
   mutate(variable = factor(variable,
                            levels=c('SO2', 'NO2', 'O3', 'CO',
                                     'PM10', 'PM2.5'))) %>%

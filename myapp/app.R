@@ -8,12 +8,12 @@ library(shinythemes)
 library(shinycssloaders)
 library(jsonlite)
 library(DT)
+library(data.table)
 library(leaflet)
 library(leaflegend)
 library(Hmisc)
 library(corrplot)
 library(PerformanceAnalytics)
-library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
 library(data.table)
@@ -21,12 +21,10 @@ library(tidyverse)
 library(devtools)
 library(openair)
 library(openairmaps)
+library(dplyr)
+library(zoo)
 
 
-#some other needed functions
-source_url("https://raw.githubusercontent.com/hadley/reshape/b26d183e18aade8ed826927c04fa37d7be79924c/R/formula.r")
-source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/cast.r")
-source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/melt.r")
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
