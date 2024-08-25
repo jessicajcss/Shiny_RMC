@@ -118,7 +118,8 @@ missing_dataagg <- data_thermo %>%
   mutate(Cidade = as.factor(Cidade)) %>%
   group_by(date = floor_date(date, '1 hour')) %>%
   filter(!is.na(PM2.5))  %>%
-  count(Cidade, date)
+  count(Cidade, date) %>%
+  arrange(desc(n))
 
 
 
@@ -162,13 +163,14 @@ missing <- dataaggfinal %>%
   mutate(datepaste = as.Date(date)) %>%
   select(Cidade, datepaste, PM2.5) %>%
   dplyr::group_by(Cidade, datepaste) %>%
-  summarise_all(funs(sum(!is.na(.)))) %>%
-  filter(PM2.5 > 0) %>%
-  arrange(desc(PM2.5))
+  filter(!is.na(PM2.5))  %>%
+  count(Cidade, datepaste) %>%
+  filter(n > 0) %>%
+  arrange(desc(n))
 
 # which ones are missing >= 10 hours of data
 too_many_missing <- missing %>%
-  filter(PM2.5 >= 10) %>%
+  filter(n >= 10) %>%
   mutate(LocalTime = paste(Cidade, datepaste, sep = " "))
 
 # remove missing data
@@ -178,7 +180,6 @@ dataaggfinal <- dataaggfinal %>%
   dplyr::select(-LocalTime)
 
 # mean imputation for the others
-#detach(package:plyr)
 
 avg_hour <- dataaggfinal %>%
   mutate(hour = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%H:%M:%S")),
