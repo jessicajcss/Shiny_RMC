@@ -4,18 +4,24 @@
 
 library(shiny)
 library(shinydashboard)
+library(shinythemes)
+library(shinycssloaders)
+library(jsonlite)
 library(DT)
 library(leaflet)
-library(shinycssloaders)
+library(leafletlegend)
 library(Hmisc)
 library(corrplot)
 library(PerformanceAnalytics)
 library(dplyr)
 library(ggplot2)
-library(shinythemes)
+library(RColorBrewer)
 library(data.table)
 library(tidyverse)
 library(devtools)
+library(openair)
+library(openairmaps)
+
 
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
@@ -371,7 +377,8 @@ server <- function(input, output) {
 Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/pollutants_table.csv")
 
 # Table showing PM2.5 cautions
-  pm2_5data<-Poltab[Poltab$Poluente == "PM2.5", ]
+
+pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
   output$tabPM25 <- DT::renderDataTable(
     DT::datatable({
       pm2_5data[,c(1:3)]
@@ -385,7 +392,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
     ))
 
   # Table showing PM10 cautions
-  pm10data<- Poltab[Poltab$Poluente == "PM10", ]
+  pm10data<- Poltab[Poltab$Poluente == " PM10"]
   output$tabPM10 <- DT::renderDataTable(
     DT::datatable({
       pm10data[,c(1:3)]
@@ -398,7 +405,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
     ))
 
   # Table showing NO2 cautions
-  no2data<-Poltab[Poltab$Poluente == "NO2", ]
+  no2data<-Poltab[Poltab$Poluente == " NO2", ]
   output$tabNO2 <- DT::renderDataTable(
     DT::datatable({
       no2data[,c(1:3)]
@@ -412,7 +419,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
     ))
 
   # Table showing CO cautions
-  codata<-Poltab[Poltab$Poluente == "CO", ]
+  codata<-Poltab[Poltab$Poluente == " CO", ]
   output$tabCO <- DT::renderDataTable(
     DT::datatable({
       codata[,c(1:3)]
@@ -426,7 +433,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
     ))
 
   # Table showing SO2 cautions
-  so2data<-Poltab[Poltab$Poluente == "SO2", ]
+  so2data<-Poltab[Poltab$Poluente == " SO2", ]
   output$tabSO2 <- DT::renderDataTable(
     DT::datatable({
       so2data[,c(1:3)]
@@ -440,7 +447,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
     ))
 
   # Table showing O3 cautions
-  o3data<-Poltab[Poltab$Poluente == "O3", ]
+  o3data<-Poltab[Poltab$Poluente == " O3", ]
   output$tabO3 <- DT::renderDataTable(
     DT::datatable({
       o3data[,c(1:3)]
@@ -495,7 +502,7 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
       mutate(popup_Info=paste("Cidade: ",Cidade,"</br>",
                               "AQI: ",AQI,"</br>",
                               "Condition: ",AQI_Qualidade))
-    library(RColorBrewer) #brewer.pal(10, "Spectral")
+    #brewer.pal(10, "Spectral")
     # gradient based on the AQI level
     risk.bins <- c(0, 50, 100, 150, 200, 300)
     binpal <- colorBin(colorRamp(c("#5F0FA2", "#814FA7", "#F46D43", "#FDAE61", "yellow","#ABDDA4")),
@@ -618,29 +625,29 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
       group_by(Date) %>%
       summarise_at(vars(SO2:PM2.5), mean, na.rm = TRUE)
 
-    if(input$Poluente == "PM2.5") {x    <- week_Cidade[, c(1,2)]
+    if(input$Poluente == "PM2.5") {x    <- week_Cidade[, c(1,7)]
                                     color <- "green"
-                                    y    <- week_Cidade2[, c(1,2)]}
-    if(input$Poluente == "PM10") {x    <- week_Cidade[, c(1,3)]
+                                    y    <- week_Cidade2[, c(1,7)]}
+    if(input$Poluente == "PM10") {x    <- week_Cidade[, c(1,6)]
                                       color <- "brown"
-                                      y    <- week_Cidade2[, c(1,3)]}
-    if(input$Poluente == "NO2") {x    <- week_Cidade[, c(1,4)]
+                                      y    <- week_Cidade2[, c(1,6)]}
+    if(input$Poluente == "NO2") {x    <- week_Cidade[, c(1,3)]
                                        color <- "red"
-                                       y    <- week_Cidade2[, c(1,4)]}
+                                       y    <- week_Cidade2[, c(1,3)]}
     if(input$Poluente == "CO") {x    <- week_Cidade[, c(1,5)]
                                       color <- "blue"
                                       y    <- week_Cidade2[, c(1,5)]}
-    if(input$Poluente == "SO2") {x    <- week_Cidade[, c(1,6)]
+    if(input$Poluente == "SO2") {x    <- week_Cidade[, c(1,2)]
                                         color <- "orange"
-                                        y    <- week_Cidade2[, c(1,6)]}
-    if(input$Poluente == "O3") {x    <- week_Cidade[, c(1,7)]
+                                        y    <- week_Cidade2[, c(1,2)]}
+    if(input$Poluente == "O3") {x    <- week_Cidade[, c(1,4)]
                                         color <- "grey50"
-                                        y    <- week_Cidade2[, c(1,7)]}
+                                        y    <- week_Cidade2[, c(1,4)]}
 
 
 
     plot(x,type="b",lwd=2,
-         xaxt="n", ylim=c(0,max(Datafinal[input$Poluente], na.rm = T)),
+         xaxt="n", ylim=c(0, max(Datafinal[input$Poluente], na.rm = T)),
          col=color,
          xlab="Data",ylab="Concentração (ug/m³)")
 
@@ -673,7 +680,6 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
   # ----------------------------------------------------MAP FOR polarplots--------------------------------------------------
   #source("00-data_wrangling.R")
 
-  library(leaflegend)
 
   output$sites <- renderLeaflet({
 
@@ -736,7 +742,6 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
   meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv")
 
   output$map_polarplot <- renderLeaflet({
-    library(openairmaps)
     meteo <- meteo %>%
       mutate(data = ifelse(str_detect(date, ":00"),
                            as.character(date),
@@ -802,7 +807,6 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
   week_new <- left_join(Datafinal, meteo, by = c("Cidade", "Date"))
   week_new <- subset(week_new, between(Date, as.Date(input$start_date), as.Date(input$end_date)))
 
-  library(openair)
   week_new %>%
     pollutionRose(pollutant = "ws",
                   type = "Cidade")
