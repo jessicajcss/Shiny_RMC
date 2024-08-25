@@ -60,7 +60,7 @@ data_thermo <- data_thermo %>%
   filter(Local == "Rio Branco do Sul" | Local == "Almirante Tamandaré") %>%
   subset(localDate >= "2023-08-02" ) %>%#& localDate <= '2023-12-21'
   unique() %>%
-  mutate(localDateTime = ymd_hms(paste0(localDate, " ", localTime))) %>%
+  mutate(localDateTime = ymd_hm(paste0(localDate, " ", localTime))) %>%
   select(Local, localDateTime, so2, no2, o3, co, pm2p5, pm10,  rh)
 
 colnames(data_thermo) <- c('Cidade','date','SO2', 'NO2', 'O3', 'CO', 'PM2.5','PM10', 'rh_sensor')
