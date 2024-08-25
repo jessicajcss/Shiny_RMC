@@ -178,7 +178,7 @@ dataaggfinal <- dataaggfinal %>%
   dplyr::select(-LocalTime)
 
 # mean imputation for the others
-detach(package:plyr)
+#detach(package:plyr)
 
 avg_hour <- dataaggfinal %>%
   mutate(hour = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%H:%M:%S")),
