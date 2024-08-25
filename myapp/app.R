@@ -173,13 +173,13 @@ ui <- dashboardPage(
                   seamless = "seamless",
                   src = "https://rmcqualidadedoar.netlify.app/",
                   height = 430, width = '100%'))),
-              fluidRow(12,
+              fluidRow(
                 column(width=12,tags$h2(width=5,"Video Of the Day")),
                 box(width=12,HTML('<iframe width="100%" height="430" src="https://ai.invideo.io/watch/fY5jyjM1VR2"
                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
                        gyroscope; picture-in-picture" allowfullscreen></iframe>'))),
               br(),
-              fluidRow(12,
+              fluidRow(
                 column(width=12,tags$h2(width=5,"Locais de Monitoramento")),
                 box(title = "Qualidade do Ar e Meteorológico",solidHeader = TRUE, status = "primary",height=650,
                         width = 12,leafletOutput(height = 590,"sites")))
