@@ -117,13 +117,14 @@ h <- 1 # aggregate to every h hours
 missing_dataagg <- data_thermo %>%
   mutate(Cidade = as.factor(Cidade)) %>%
   group_by(date = floor_date(date, '1 hour')) %>%
-  group_by(Cidade, date) %>%
-  summarise_all(funs(sum(!is.na(.))))
+  filter(!is.na(PM2.5))  %>%
+  count(Cidade, date)
+
 
 
 # which ones are missing >= 10 hours of data
 too_many_missing <- missing_dataagg %>%
-  filter(PM2.5 < x/2) %>%
+  filter(n < x/2) %>%
   mutate(LocalTime = paste(Cidade, date, sep = " "))
 
 # remove missing data
