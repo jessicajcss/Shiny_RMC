@@ -7,6 +7,9 @@
 
 library(tidyverse)
 
+devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-supportR_library_github_ls.R")
+
+
 #Dados horários em UTC
 # https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
 temp <- github_ls(repo = "https://github.com/jessicajcss/Shiny_RMC/tree/main/data/sensores_thermo/", # https://search.r-project.org/CRAN/refmans/supportR/html/github_ls.html

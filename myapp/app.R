@@ -343,16 +343,7 @@ ui <- dashboardPage(
 server <- function(input, output) {
 
 
-  user <- unname(Sys.info()["user"])
-  if (user == "shiny") {
 
-    # Set library locations
-    .libPaths(c(
-      "https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-supportR_library_github_ls.R"
-    )
-    )
-
-  }
   # ----------------------------------------------------------TAB4-----------------------------------------------------------------------
 
   # --------------------------------------------------------CORRELATION MATRIX ----------------------------------------------------------
