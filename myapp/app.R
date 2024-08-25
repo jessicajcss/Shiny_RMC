@@ -60,7 +60,7 @@ Cidade <- unique(Datafinal$Cidade)
 
 
 # layout
-title <- tags$img(src='https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/breathing.png', height='30', # width='46',
+title <- tags$img(src='https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/ufpr.png', height='30', # width='46',
                   "Qualidade do Ar & Meteorologia", align = "left")
 # ---------------------------------------------------------------------------------------------------------
 #                                                USER INTERFACE
@@ -733,9 +733,11 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
   })
 
 
+  meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv")
+
   output$map_polarplot <- renderLeaflet({
     library(openairmaps)
-    meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
+    meteo <- meteo %>%
       mutate(data = ifelse(str_detect(date, ":00"),
                            as.character(date),
                            paste(as.character(date), "00:00:00", sep = " "))) %>%
@@ -781,7 +783,10 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
 
 
   output$wrose <- renderPlot({
-  meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
+
+  Datafinal$Date <- as.Date(Datafinal$Date)
+
+  meteo <- meteo %>%
     mutate(data = ifelse(str_detect(date, ":00"),
                          as.character(date),
                          paste(as.character(date), "00:00:00", sep = " "))) %>%
@@ -800,13 +805,12 @@ Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main
   library(openair)
   week_new %>%
     pollutionRose(pollutant = "ws",
-                  type = "Cidade",
-                  extra.args = "")
+                  type = "Cidade")
     })
 
 
   output$dist <- renderPlot({
-    meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
+    meteo <- meteo %>%
       mutate(data = ifelse(str_detect(date, ":00"),
                            as.character(date),
                            paste(as.character(date), "00:00:00", sep = " "))) %>%
