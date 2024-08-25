@@ -264,7 +264,7 @@ ui <- dashboardPage(
 
                            dateInput("end_date",h3("Data final"),
                                      format = "yyyy-mm-dd",
-                                     value=Sys.Date(),
+                                     value="2024-06-01",
                                      min="2023-08-10",
                                      max=Sys.Date())
 
@@ -782,24 +782,13 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
 
     week_new <- left_join(week_new, thermo_localizacao, by = "Cidade")
 
-    if (nrow(week_new) > 1000) {
     polarMap(week_new,
              pollutant = c("SO2", "NO2", "O3", "CO", "PM2.5", "PM10"),
              latitude = "Latitude",
              longitude = "Longitude",
              key = TRUE,
              provider = "CartoDB.Positron")
-    }
 
-    if (nrow(week_new) <= 1000) {
-      polarMap(week_new,
-               statistic = "nwr",
-               pollutant = c("SO2", "NO2", "O3", "CO", "PM2.5", "PM10"),
-               latitude = "Latitude",
-               longitude = "Longitude",
-               key = TRUE,
-               provider = "CartoDB.Positron")
-    }
   })
 
 
