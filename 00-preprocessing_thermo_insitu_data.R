@@ -51,7 +51,6 @@ my_func <- function(x,y) {
 my_func(myfiles[[1]], myfiles[[2]])
 
 library(tidyverse)
-library(reshape2)
 
 # unificar planilhas de dados
 data_thermo <- do.call("rbind", myfiles)

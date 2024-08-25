@@ -23,6 +23,9 @@ library(openair)
 library(openairmaps)
 
 
+#some other needed functions
+source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/cast.r")
+source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/melt.r")
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
