@@ -5,7 +5,7 @@ account: rmcqualidadedoar
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12517864
-bundleId: 9024369
+bundleId: 9024428
 url: https://rmcqualidadedoar.shinyapps.io/myapp/
 version: 1
 asMultiple: FALSE
