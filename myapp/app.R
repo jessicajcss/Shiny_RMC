@@ -60,7 +60,7 @@ Cidade <- unique(Datafinal$Cidade)
 
 
 # layout
-title <- tags$img(src='breathing.ico', height='30', # width='46',
+title <- tags$img(src='https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/breathing.png', height='30', # width='46',
                   "Qualidade do Ar & Meteorologia", align = "left")
 # ---------------------------------------------------------------------------------------------------------
 #                                                USER INTERFACE
@@ -158,7 +158,7 @@ ui <- dashboardPage(
                             }
                             </style>
                             </html>'),
-                column(width=5,tags$img(src="labair.png", height=200, align = "center"))),
+                column(width=5,tags$img(src="https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/labair.png", height=200, align = "center"))),
               br(),
               fluidRow(
                 column(width=12,tags$h2(width=5,"Página do Projeto"))),
@@ -225,7 +225,7 @@ ui <- dashboardPage(
                           # tableOutput("tableAQI")
                 #column(
                       width=12,
-                       tags$img(width = '90%', src="aqi_table.png", align = "center"))
+                       tags$img(width = '90%', src="https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/aqi_table.png", align = "center"))
                 ),
 
       ),

@@ -5,6 +5,7 @@
 ## Libraries
 library(supportR)
 library(tidyverse)
+library(webr)
 #Dados horários em UTC
 # https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
 temp <- github_ls(repo = "https://github.com/jessicajcss/Shiny_RMC/tree/main/data/sensores_thermo/", # https://search.r-project.org/CRAN/refmans/supportR/html/github_ls.html
@@ -19,10 +20,16 @@ temp <- temp %>%
   mutate(url = paste(dir, name, sep = "/"))
 
 
+
 # aplicar leitura das planilhas contidas na listagem temp
+
 myfiles <- lapply(temp$url,
-                  read_delim,
-                  col_select = c(1:21))
+                  read.csv)
+
+
+#myfiles <- lapply(temp$url,
+ #                 read_delim,
+  #                col_select = c(1:21))
 
 # checking if all data frames have the same column names
 my_func <- function(x,y) {
@@ -44,6 +51,7 @@ library(reshape2)
 
 # unificar planilhas de dados
 data_thermo <- do.call("rbind", myfiles)
+data_thermo <- data_thermo[, c(1:21)]
 
 data_thermo <- data_thermo %>%
   mutate(Local = recode((instrumentName),
