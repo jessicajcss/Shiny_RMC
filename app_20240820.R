@@ -15,15 +15,15 @@ library(ggplot2)
 library(shinythemes)
 library(data.table)
 library(tidyverse)
+library(devtools)
 
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
-source('./01-AQI_calculation_thermo_data.R')
-# [OR PULL] air_quality_data <- read_csv("./output/temp_sub.csv")
+devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/01-AQI_calculation_thermo_data.R")
 
 
-localizacao <- read.csv("./data/locais_sensores.csv",
+localizacao <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/locais_sensores.csv",
                         sep = ";")
 
 
@@ -367,10 +367,10 @@ server <- function(input, output) {
   # ----------------------------------------------------TABLES FOR POLLUTANT PRECAUTIONS--------------------------------------------------
 
   # reading csv file containing precautions from pollutants
-  Poltab <- fread("./data/pollutants_table.csv")
 
+Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/pollutants_table.csv")
 
-  # Table showing PM2.5 cautions
+# Table showing PM2.5 cautions
   pm2_5data<-Poltab[Poltab$Poluente == "PM2.5", ]
   output$tabPM25 <- DT::renderDataTable(
     DT::datatable({
@@ -458,9 +458,8 @@ server <- function(input, output) {
 
 
 # ------------------------------------------------------TAB1--------------------------------------------------
-  AQItab <- fread("./data/AQItab.csv",
-                  header = T, drop=5:8) %>%
-    drop_na()
+
+  AQItab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/04941d3078dd5e53233bab5253fad4ccc178bb7f/data/AQItab.csv")
 
   output$tableAQI <- renderTable({AQItab}, #https://gallery.shinyapps.io/109-render-table/
                                  striped = TRUE,
@@ -736,7 +735,7 @@ server <- function(input, output) {
 
   output$map_polarplot <- renderLeaflet({
     library(openairmaps)
-    meteo <- read.csv("./data/meteo_hour.csv") %>%
+    meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
       mutate(data = ifelse(str_detect(date, ":00"),
                            as.character(date),
                            paste(as.character(date), "00:00:00", sep = " "))) %>%
@@ -782,7 +781,7 @@ server <- function(input, output) {
 
 
   output$wrose <- renderPlot({
-  meteo <- read.csv("./data/meteo_hour.csv") %>%
+  meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
     mutate(data = ifelse(str_detect(date, ":00"),
                          as.character(date),
                          paste(as.character(date), "00:00:00", sep = " "))) %>%
@@ -807,7 +806,7 @@ server <- function(input, output) {
 
 
   output$dist <- renderPlot({
-    meteo <- read.csv("./data/meteo_hour.csv") %>%
+    meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv") %>%
       mutate(data = ifelse(str_detect(date, ":00"),
                            as.character(date),
                            paste(as.character(date), "00:00:00", sep = " "))) %>%

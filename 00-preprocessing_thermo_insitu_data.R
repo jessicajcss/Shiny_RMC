@@ -3,21 +3,23 @@
 
 
 ## Libraries
+library(supportR)
 library(tidyverse)
 #Dados horários em UTC
+temp <- github_ls(repo = "https://github.com/jessicajcss/Shiny_RMC/tree/main/data/sensores_thermo/",
+                  recursive = TRUE, quiet = FALSE)
 
-# puxar banco de dados meteo da pasta
-temp <- list.files(path = "./data/sensores_thermo",
-                   pattern = "*.csv") # listar arquivos .csv do diretório
-head(temp)
+path2 <- "./data/sensores_thermo"
+dir <- "https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/sensores_thermo"
+
+temp <- temp %>%
+  subset(path == path2) %>%
+  select(name) %>%
+  mutate(url = paste(dir, name, sep = "/"))
 
 
 # aplicar leitura das planilhas contidas na listagem temp
-
-dir <- "./data/sensores_thermo"
-
-temp.qualified <- paste(dir, temp, sep = "/")
-myfiles <- lapply(temp.qualified,
+myfiles <- lapply(temp$url,
                   read_delim,
                   col_select = c(1:21))
 
