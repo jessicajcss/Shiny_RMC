@@ -5,6 +5,11 @@ library(shiny)
 
 runGist("41f1670fb03e5af65e56429638166bcb")
 
+
+
+
+### GITHUB
+
 # https://github.com/RamiKrispin/shinylive-r
 install.packages(c("shinylive", "httpuv"))
 
@@ -16,6 +21,20 @@ shinylive::export(appdir = "myapp", destdir = "docs")
 # checking
 httpuv::runStaticServer("docs/", port=8008)
 
+
+
+### SHINYAPP.IO ---- https://www.shinyapps.io/admin/#/dashboard
+install.packages('rsconnect')
+
+rsconnect::setAccountInfo(name='rmcqualidadedoar',
+                          token='52D20482668963755954F50DC9D8FBFA',
+                          secret='<SECRET>')
+library(rsconnect)
+rsconnect::deployApp('./myapp')
+
+### BLOGDOWN
+
+# https://liuyanguu.github.io/post/2019/02/24/shiny-in-blogdown/
 
 #########
 ### For future refs

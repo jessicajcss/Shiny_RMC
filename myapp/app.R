@@ -511,7 +511,7 @@ server <- function(input, output) {
     # gradient based on the AQI level
     risk.bins <- c(0, 50, 100, 150, 200, 300)
     binpal <- colorBin(colorRamp(c("#5F0FA2", "#814FA7", "#F46D43", "#FDAE61", "yellow","#ABDDA4")),
-                       Datafinal$AQI, bins = risk.bins, pretty = FALSE, reverse = T)
+                       Datafinal$AQI, bins = risk.bins, reverse = T)
 
     # sending the data to the leaflet map to be rendered
     # the markers are provided the pallet colour
