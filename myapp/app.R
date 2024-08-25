@@ -108,18 +108,18 @@ ui <- dashboardPage(
               tags$h3('Download de dados', width = 3),
               fluidRow(
                 column(3,
-                           dateInput("start_date",h3("Data inicial"),
-                                     format = "yyyy-mm-dd",
-                                     value="2023-08-10",
-                                     min="2023-08-10",
-                                     max=Sys.Date()),
+                       dateInput("start_date",h3("Data inicial"),
+                                 format = "yyyy-mm-dd",
+                                 value="2023-08-10",
+                                 min="2023-08-10",
+                                 max=Sys.Date()),
 
 
-                           dateInput("end_date",h3("Data final"),
-                                     format = "yyyy-mm-dd",
-                                     value=Sys.Date(),
-                                     min="2023-08-10",
-                                     max=Sys.Date())),
+                       dateInput("end_date",h3("Data final"),
+                                 format = "yyyy-mm-dd",
+                                 value=Sys.Date(),
+                                 min="2023-08-10",
+                                 max=Sys.Date())),
                 column(9,
                        tableOutput("tableData"))
               ),
@@ -129,7 +129,7 @@ ui <- dashboardPage(
 
               # box(title = "Dataset",solidHeader = TRUE,status = "primary",height="100%", width =12,
 
-               ),
+      ),
       # ---------------------------------------------HOME TAB-------------------------------------------------------------
 
 
@@ -182,8 +182,8 @@ ui <- dashboardPage(
               fluidRow(
                 column(width=12,tags$h2(width=5,"Locais de Monitoramento")),
                 box(title = "Qualidade do Ar e Meteorológico",solidHeader = TRUE, status = "primary",height=650,
-                        width = 12,leafletOutput(height = 590,"sites")))
-               # box(width=12,HTML('<iframe width="100%" height="430" src="https://rmcqualidadedoar.netlify.app/" clipboard-write; encrypted-media></iframe>'))), # IT MUST END WITH </iframe>
+                    width = 12,leafletOutput(height = 590,"sites")))
+              # box(width=12,HTML('<iframe width="100%" height="430" src="https://rmcqualidadedoar.netlify.app/" clipboard-write; encrypted-media></iframe>'))), # IT MUST END WITH </iframe>
       ),
 
       # -------------------------------------------------MAP PURPLEAIR PAGE------------------------------------------------------------------
@@ -191,11 +191,11 @@ ui <- dashboardPage(
       tabItem(tabName = "purpleair",
               fluidRow(
                 box(width=12,
-                tags$iframe(
-                  seamless = "seamless",
-                  src = "https://map.purpleair.com/1/lt/mPM25/a525600/p86400/cC5#9.7/-25.3517/-49.2683",
-                  height = 800, width = "100%")))
-              ),
+                    tags$iframe(
+                      seamless = "seamless",
+                      src = "https://map.purpleair.com/1/lt/mPM25/a525600/p86400/cC5#9.7/-25.3517/-49.2683",
+                      height = 800, width = "100%")))
+      ),
 
 
 
@@ -229,15 +229,15 @@ ui <- dashboardPage(
                     ))),
               br(),
               fluidRow(#DTOutput(outputId = "tableAQI", width = '70%')
-                       box(title = "Índice de Qualidade do Ar (IQA)",
-                           footer = "Referência: <https://aqicn.org/scale/pt/>",
-                           #background = "yellow",
-                           #width = '100%',  height = 700,
-                          # tableOutput("tableAQI")
-                #column(
-                      width=12,
-                       tags$img(width = '90%', src="https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/aqi_table.png", align = "center"))
-                ),
+                box(title = "Índice de Qualidade do Ar (IQA)",
+                    footer = "Referência: <https://aqicn.org/scale/pt/>",
+                    #background = "yellow",
+                    #width = '100%',  height = 700,
+                    # tableOutput("tableAQI")
+                    #column(
+                    width=12,
+                    tags$img(width = '90%', src="https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/www/aqi_table.png", align = "center"))
+              ),
 
       ),
       # ---------------------------------------------------------------LINEGRAPH TAB---------------------------------------------------------
@@ -285,19 +285,19 @@ ui <- dashboardPage(
                            box(width=12,plotOutput(height = 500,"plots")))),
                 box(title = "Concentrações e ventos",solidHeader = TRUE, status = "primary",height=650,
                     width = 12,leafletOutput(height = 590,"map_polarplot"))
-                ),
-      fluidRow(
-        box(title="Condições Meteorológicas",
-            status="primary",
-            solidHeader=TRUE,
-            plotOutput("dist"),
-            width=8),
-        box(title="Rosa dos ventos",
-            status="primary",
-            solidHeader=TRUE,
-            plotOutput("wrose"),
-            width=4)
-      )
+              ),
+              fluidRow(
+                box(title="Condições Meteorológicas",
+                    status="primary",
+                    solidHeader=TRUE,
+                    plotOutput("dist"),
+                    width=8),
+                box(title="Rosa dos ventos",
+                    status="primary",
+                    solidHeader=TRUE,
+                    plotOutput("wrose"),
+                    width=4)
+              )
       ),
 
 
@@ -320,12 +320,12 @@ ui <- dashboardPage(
                 column(6,
                        box(title = "Risco e Prevenção", solidHeader = TRUE, status = "primary", width = 12,
                            tabsetPanel(footer = "Referência: <https://portal.ct.gov/deep/air/monitoring/aqi-health-effects-statements>",
-                             tabPanel(HTML(c(paste0("SO",tags$sub("2")))), withSpinner(dataTableOutput("tabSO2",height = 475))),
-                             tabPanel(HTML(c(paste0("NO",tags$sub("2")))), withSpinner(dataTableOutput("tabNO2",height = 475))),
-                             tabPanel(HTML(c(paste0("O",tags$sub("3")))), withSpinner(dataTableOutput("tabO3",height =475))),
-                             tabPanel("CO", withSpinner(dataTableOutput("tabCO",height = 475))),
-                             tabPanel(HTML(c(paste0("MP",tags$sub("2.5")))), withSpinner(dataTableOutput("tabPM25",height = 475))),
-                             tabPanel(HTML(c(paste0("MP",tags$sub("10")))), withSpinner(dataTableOutput("tabPM10",height = 475)))
+                                       tabPanel(HTML(c(paste0("SO",tags$sub("2")))), withSpinner(dataTableOutput("tabSO2",height = 475))),
+                                       tabPanel(HTML(c(paste0("NO",tags$sub("2")))), withSpinner(dataTableOutput("tabNO2",height = 475))),
+                                       tabPanel(HTML(c(paste0("O",tags$sub("3")))), withSpinner(dataTableOutput("tabO3",height =475))),
+                                       tabPanel("CO", withSpinner(dataTableOutput("tabCO",height = 475))),
+                                       tabPanel(HTML(c(paste0("MP",tags$sub("2.5")))), withSpinner(dataTableOutput("tabPM25",height = 475))),
+                                       tabPanel(HTML(c(paste0("MP",tags$sub("10")))), withSpinner(dataTableOutput("tabPM10",height = 475)))
                            )
 
                        ))
@@ -379,11 +379,11 @@ server <- function(input, output) {
 
   # reading csv file containing precautions from pollutants
 
-Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/pollutants_table.csv")
+  Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/pollutants_table.csv")
 
-# Table showing PM2.5 cautions
+  # Table showing PM2.5 cautions
 
-pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
+  pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
   output$tabPM25 <- DT::renderDataTable(
     DT::datatable({
       pm2_5data[,c(1:3)]
@@ -469,7 +469,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
 
 
 
-# ------------------------------------------------------TAB1--------------------------------------------------
+  # ------------------------------------------------------TAB1--------------------------------------------------
 
   AQItab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/04941d3078dd5e53233bab5253fad4ccc178bb7f/data/AQItab.csv")
 
@@ -480,7 +480,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
 
 
 
-   output$PM25<-renderPlot({
+  output$PM25<-renderPlot({
     Day <- Datafinal %>%
       mutate(Mês = month(Date, label = T)) %>%
       subset(Cidade == input$Cities & Year == input$years) %>%
@@ -522,7 +522,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
 
   })
 
-# ----------------------------------------------------BAR GRAPHS FOR AQI--------------------------------------------------
+  # ----------------------------------------------------BAR GRAPHS FOR AQI--------------------------------------------------
   output$plotPM25<-renderPlot({
     Day <- subset(Datafinal,Datafinal$Date == input$select_date)
     df_base <- ggplot(data=Day, aes(x=Cidade, y=PM2.5, fill=AQI_PM25),
@@ -622,7 +622,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
     week_new <- Datafinal[,c(1:8)]
     week_new <- subset(week_new,between(Date, as.Date(input$start_date), as.Date(input$end_date)))
 
-     week_Cidade <- subset(week_new,Cidade==input$Cities1) %>%
+    week_Cidade <- subset(week_new,Cidade==input$Cities1) %>%
       group_by(Date) %>%
       summarise_at(vars(SO2:PM2.5), mean, na.rm = TRUE)
 
@@ -631,23 +631,23 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
       summarise_at(vars(SO2:PM2.5), mean, na.rm = TRUE)
 
     if(input$Poluente == "PM2.5") {x    <- week_Cidade[, c(1,7)]
-                                    color <- "green"
-                                    y    <- week_Cidade2[, c(1,7)]}
+    color <- "green"
+    y    <- week_Cidade2[, c(1,7)]}
     if(input$Poluente == "PM10") {x    <- week_Cidade[, c(1,6)]
-                                      color <- "brown"
-                                      y    <- week_Cidade2[, c(1,6)]}
+    color <- "brown"
+    y    <- week_Cidade2[, c(1,6)]}
     if(input$Poluente == "NO2") {x    <- week_Cidade[, c(1,3)]
-                                       color <- "red"
-                                       y    <- week_Cidade2[, c(1,3)]}
+    color <- "red"
+    y    <- week_Cidade2[, c(1,3)]}
     if(input$Poluente == "CO") {x    <- week_Cidade[, c(1,5)]
-                                      color <- "blue"
-                                      y    <- week_Cidade2[, c(1,5)]}
+    color <- "blue"
+    y    <- week_Cidade2[, c(1,5)]}
     if(input$Poluente == "SO2") {x    <- week_Cidade[, c(1,2)]
-                                        color <- "orange"
-                                        y    <- week_Cidade2[, c(1,2)]}
+    color <- "orange"
+    y    <- week_Cidade2[, c(1,2)]}
     if(input$Poluente == "O3") {x    <- week_Cidade[, c(1,4)]
-                                        color <- "grey50"
-                                        y    <- week_Cidade2[, c(1,4)]}
+    color <- "grey50"
+    y    <- week_Cidade2[, c(1,4)]}
 
 
 
@@ -800,28 +800,28 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
 
   output$wrose <- renderPlot({
 
-  Datafinal$Date <- as.Date(Datafinal$Date)
+    Datafinal$Date <- as.Date(Datafinal$Date)
 
-  meteo <- meteo %>%
-    mutate(data = ifelse(str_detect(date, ":00"),
-                         as.character(date),
-                         paste(as.character(date), "00:00:00", sep = " "))) %>%
-    select(-date, -Local) %>%
-    subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
-    rename(Date = data,
-           Cidade = site)  %>%
-    mutate(Date = as_datetime(Date),
-           Cidade = case_when(Cidade == "Colombo" ~ "Almirante Tamandaré",
-                              TRUE ~ Cidade))
+    meteo <- meteo %>%
+      mutate(data = ifelse(str_detect(date, ":00"),
+                           as.character(date),
+                           paste(as.character(date), "00:00:00", sep = " "))) %>%
+      select(-date, -Local) %>%
+      subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
+      rename(Date = data,
+             Cidade = site)  %>%
+      mutate(Date = as_datetime(Date),
+             Cidade = case_when(Cidade == "Colombo" ~ "Almirante Tamandaré",
+                                TRUE ~ Cidade))
 
-  Datafinal$Date <- as.Date(Datafinal$Date)
-  week_new <- left_join(Datafinal, meteo, by = c("Cidade", "Date"))
-  week_new <- subset(week_new, between(Date, as.Date(input$start_date), as.Date(input$end_date)))
+    Datafinal$Date <- as.Date(Datafinal$Date)
+    week_new <- left_join(Datafinal, meteo, by = c("Cidade", "Date"))
+    week_new <- subset(week_new, between(Date, as.Date(input$start_date), as.Date(input$end_date)))
 
-  week_new %>%
-    pollutionRose(pollutant = "ws",
-                  type = "Cidade")
-    })
+    week_new %>%
+      pollutionRose(pollutant = "ws",
+                    type = "Cidade")
+  })
 
 
   output$dist <- renderPlot({
@@ -882,17 +882,17 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
   )
 
   output$tableData <- renderTable(width = "70%",
-      data_thermo_agg %>%
-      mutate(Date = as.Date(date)) %>%
-      subset(Date >= input$start_date & Date <= input$end_date) %>%
-      mutate(data = as.character(as_datetime(date))) %>%
-      select(data, SO2:PM10) %>%
-      mutate(date = ifelse(str_detect(data, ":00"),
-                           as.character(data),
-                           paste(as.character(data), "00:00:00", sep = " ")),
-             data = date) %>%
-      select(-date) %>%
-      head(n = 20L)
+                                  data_thermo_agg %>%
+                                    mutate(Date = as.Date(date)) %>%
+                                    subset(Date >= input$start_date & Date <= input$end_date) %>%
+                                    mutate(data = as.character(as_datetime(date))) %>%
+                                    select(data, SO2:PM10) %>%
+                                    mutate(date = ifelse(str_detect(data, ":00"),
+                                                         as.character(data),
+                                                         paste(as.character(data), "00:00:00", sep = " ")),
+                                           data = date) %>%
+                                    select(-date) %>%
+                                    head(n = 20L)
   )
 
 }
