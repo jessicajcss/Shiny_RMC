@@ -1,6 +1,8 @@
 
 # Based on https://github.com/Sarah-2510/R-Shiny-Project---AIR-QUALITY-INDEX/blob/main/Rshiny%20final.R
-# Last update: 2024-08-23
+# and on https://nwtang.shinyapps.io/weather/
+# and on https://rpubs.com/db102291/636358
+### Last update: 2024-08-23
 
 library(shiny)
 library(shinydashboard)
@@ -17,9 +19,19 @@ library(data.table)
 library(tidyverse)
 library(devtools)
 
+
+
+
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
+
+## Some guidance:
+# https://www.reddit.com/r/rstats/comments/fs1d08/how_to_deploy_a_shinyio_app_that_pulls_from
+# https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
+
+
+
 devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/01-AQI_calculation_thermo_data.R")
 
 
