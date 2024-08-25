@@ -9,7 +9,7 @@ library(shinycssloaders)
 library(jsonlite)
 library(DT)
 library(leaflet)
-library(leafletlegend)
+library(leaflegend)
 library(Hmisc)
 library(corrplot)
 library(PerformanceAnalytics)
@@ -732,6 +732,21 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
       addLayersControl(
         overlayGroups = localizacao$Cidade,
         options = layersControlOptions(collapsed = FALSE)
+      ) %>%
+      addProviderTiles(
+        "CartoDB.Positron",
+        group = "CartoDB.Positron"
+      ) %>%
+      addProviderTiles(
+        "Esri.WorldImagery",
+        group = "Esri.WorldImagery"
+      ) %>%
+      # add a layers control
+      addLayersControl(
+        baseGroups = c("CartoDB.Positron", "Esri.WorldImagery"
+        ),
+        # position it on the topleft
+        position = "bottomleft"
       )
 
 
@@ -772,6 +787,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
              pollutant = c("SO2", "NO2", "O3", "CO", "PM2.5", "PM10"),
              latitude = "Latitude",
              longitude = "Longitude",
+             key = TRUE,
              provider = "CartoDB.Positron")
     }
 
@@ -781,6 +797,7 @@ pm2_5data<-Poltab[Poltab$Poluente == " PM2.5", ]
                pollutant = c("SO2", "NO2", "O3", "CO", "PM2.5", "PM10"),
                latitude = "Latitude",
                longitude = "Longitude",
+               key = TRUE,
                provider = "CartoDB.Positron")
     }
   })
