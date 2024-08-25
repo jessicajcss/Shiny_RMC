@@ -24,6 +24,7 @@ library(openairmaps)
 
 
 #some other needed functions
+source_url("https://raw.githubusercontent.com/hadley/reshape/b26d183e18aade8ed826927c04fa37d7be79924c/R/formula.r")
 source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/cast.r")
 source_url("https://raw.githubusercontent.com/hadley/reshape/master/R/melt.r")
 #  --------------------------------------------------------------------------------------------------------
