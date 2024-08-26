@@ -1,4 +1,3 @@
-
 # Based on https://github.com/Sarah-2510/R-Shiny-Project---AIR-QUALITY-INDEX/blob/main/Rshiny%20final.R
 # Last update: 2024-08-23
 
@@ -320,7 +319,7 @@ ui <- dashboardPage(
 
                 ),
                 column(6,
-                       box(title = "Risco e Prevenção", solidHeader = TRUE, status = "primary", width = 12,
+                       box(title = "Risco e Prevenção", solidHeader = TRUE, status = "primary", width = "90%",
                            tabsetPanel(footer = "Referência: <https://portal.ct.gov/deep/air/monitoring/aqi-health-effects-statements>",
                                        tabPanel(HTML(c(paste0("SO",tags$sub("2")))), withSpinner(dataTableOutput("tabSO2",height = 475))),
                                        tabPanel(HTML(c(paste0("NO",tags$sub("2")))), withSpinner(dataTableOutput("tabNO2",height = 475))),
