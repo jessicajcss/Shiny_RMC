@@ -486,10 +486,10 @@ server <- function(input, output) {
 
   output$PM25<-renderPlot({
     Day <- Datafinal %>%
-      mutate(Mês = month(Date, label = T)) %>%
+      mutate(Mês = lubridate::month(Date, label = T)) %>%
       subset(Cidade == input$Cities & Year == input$years) %>%
-      group_by(Mês) %>%
-      summarize(Média = mean(PM2.5, na.rm = T))
+      dplyr::group_by(Mês) %>%
+      dplyr::summarize(Média = mean(PM2.5, na.rm = T))
     df_base <- ggplot(data=Day, aes(x=Mês, y=Média, fill=Média))
     df_base + geom_col() + theme_classic() + ylab('Concentração média (ug/m³)')
   })
@@ -627,11 +627,11 @@ server <- function(input, output) {
     week_new <- subset(week_new,between(Date, as.Date(input$start_date), as.Date(input$end_date)))
 
     week_Cidade <- subset(week_new,Cidade==input$Cities1) %>%
-      group_by(Date) %>%
+      dplyr::group_by(Date) %>%
       summarise_at(vars(SO2:PM2.5), mean, na.rm = TRUE)
 
     week_Cidade2 <- subset(week_new,Cidade!=input$Cities1) %>%
-      group_by(Date) %>%
+      dplyr::group_by(Date) %>%
       summarise_at(vars(SO2:PM2.5), mean, na.rm = TRUE)
 
     if(input$Poluente == "PM2.5") {x    <- week_Cidade[, c(1,7)]
@@ -811,10 +811,6 @@ server <- function(input, output) {
     Datafinal$Date <- as.Date(Datafinal$Date)
 
     meteo <- meteo %>%
-      mutate(data = ifelse(str_detect(date, ":00"),
-                           as.character(date),
-                           paste(as.character(date), "00:00:00", sep = " "))) %>%
-      select(-date, -Local) %>%
       subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
       rename(Date = data,
              Cidade = site)  %>%
@@ -834,10 +830,6 @@ server <- function(input, output) {
 
   output$dist <- renderPlot({
     meteo <- meteo %>%
-      mutate(data = ifelse(str_detect(date, ":00"),
-                           as.character(date),
-                           paste(as.character(date), "00:00:00", sep = " "))) %>%
-      select(-date, -Local) %>%
       subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
       rename(Date = data,
              Cidade = site)  %>%
