@@ -1,0 +1,22 @@
+name: myApp
+on: workflow_dispatch
+
+remote_url: ''
+auth0_config:
+  api_url: !expr paste0('https://', Sys.getenv('jessicajcss'), '.auth0.com')
+  credentials:
+    key: !expr Sys.getenv("38BF81C410654F4CACDAE71272D212134F6A4CE7F5C336DF")
+    secret: !expr Sys.getenv("2pMA9bQ8O0iMeb6sxUZnVC1bQLXdjEFnfIGbZOKA")
+
+jobs:
+  open-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - run: |
+          gh issue --repo ${{ jessicajcss/Shiny_RMC }} \
+            create --title "Issue title" --body "Issue body"
+        env:
+          GH_TOKEN: ${{ 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 }}

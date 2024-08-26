@@ -26,14 +26,12 @@ rsconnect::setAccountInfo(name='rmcqualidadedoar',
                           token='52D20482668963755954F50DC9D8FBFA',
                           secret='<SECRET>')
 library(rsconnect)
-rsconnect::deployApp('./myapp')
+rsconnect::deployApp('./dados')
 
 ### Github error 403 on Shinyapps #https://github.com/satijalab/seurat-wrappers/issues/163
 usethis::create_github_token()
-
-remotes::install_github()
-
 usethis::edit_r_environ()
+remotes::install_github("jessicajcss/Shiny_RMC")
 
 ### BLOGDOWN
 
