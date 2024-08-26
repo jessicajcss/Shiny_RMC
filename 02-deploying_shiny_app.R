@@ -22,7 +22,6 @@ shinylive::export(appdir = "myapp", destdir = "docs")
 httpuv::runStaticServer("docs/", port=8008)
 
 
-
 ### SHINYAPP.IO ---- https://www.shinyapps.io/admin/#/dashboard
 install.packages('rsconnect')
 
