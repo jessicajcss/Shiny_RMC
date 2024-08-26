@@ -90,13 +90,10 @@ remove_outlier <- function(dataframe, columns = names(dataframe)) {
 data_thermo <- data_thermo %>%
   mutate(date = force_tz(date, tz = "America/Sao_Paulo"))
 
-
-
 ### WORKING THERMO DATA ----
 
 # A remoção de outliers consistiu em remoção das leituras abaixo do percentil de 5% e acima do percentil de 95%.
 
-library(tidyverse)
 
 data_thermo <- data_thermo %>%
   dplyr::group_by(Cidade) %>%
@@ -152,7 +149,10 @@ tdf$Cidade <- "Rio Branco do Sul"
 tdf2 <- tdf %>%
   mutate(Cidade = "Almirante Tamandaré")
 
-tdf3 <- rbind(tdf, tdf2)
+tdf3 <- rbind(tdf, tdf2) %>%
+  mutate(date = force_tz(date, tz = "America/Sao_Paulo"))
+
+
 
 dataaggfinal <- merge(dataagg, tdf3, by = c("Cidade", "date"), all.y = T)
 
@@ -182,11 +182,9 @@ dataaggfinal <- dataaggfinal %>%
 # mean imputation for the others
 
 avg_hour <- dataaggfinal %>%
-  mutate(hour = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%H:%M:%S")),
-         hour = hms(hour),
-         Cidade = as.factor(Cidade)) %>%
+  mutate(hour = hour(date)) %>%
   dplyr::group_by(Cidade, hour) %>%
-  summarize(RHavg = mean(rh_sensor, na.rm = TRUE),
+  dplyr::summarize(RHavg = mean(rh_sensor, na.rm = TRUE),
             COavg = mean(CO, na.rm = TRUE),
             O3avg = mean(O3, na.rm = TRUE),
             NO2avg = mean(NO2, na.rm = TRUE),
@@ -195,8 +193,7 @@ avg_hour <- dataaggfinal %>%
             PM10avg = mean(PM10, na.rm = TRUE))
 
 dataaggfinal <- dataaggfinal %>%
-  mutate(hour = paste(format(as.POSIXct(date, tz = "America/Sao_Paulo"), format = "%H:%M:%S")),
-         hour = hms(hour)) %>%
+  mutate(hour = hour(date)) %>%
   left_join(avg_hour, by = c("Cidade", "hour")) %>%
   mutate(rh_sensor = case_when(is.na(rh_sensor) ~ RHavg, TRUE ~ rh_sensor),
          CO = case_when(is.na(CO) ~ COavg, TRUE ~ CO),
@@ -224,3 +221,4 @@ data_thermo_agg <- dataaggfinal %>%
          SO2 = SO2*2.62, #from ppb to ug/m³
          PM2.5 = PM2.5, # ug/m³
          PM10 = PM10) #ug/m³
+

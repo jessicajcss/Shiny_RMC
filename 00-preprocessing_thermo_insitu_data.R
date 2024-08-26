@@ -30,11 +30,6 @@ temp <- temp %>%
 myfiles <- lapply(temp$url,
                   read.csv)
 
-
-#myfiles <- lapply(temp$url,
- #                 read_delim,
-  #                col_select = c(1:21))
-
 # checking if all data frames have the same column names
 my_func <- function(x,y) {
   for (i in names(x)) {
@@ -50,23 +45,34 @@ my_func <- function(x,y) {
 
 my_func(myfiles[[1]], myfiles[[2]])
 
-library(tidyverse)
 
 # unificar planilhas de dados
 data_thermo <- do.call("rbind", myfiles)
 data_thermo <- data_thermo[, c(1:21)]
 
 data_thermo <- data_thermo %>%
-  mutate(Local = recode((instrumentName),
+  mutate(localDate = as.Date(localDate),
+         Local = recode((instrumentName),
                          "thermo-grid-883f4a344cbe" = "Rio Branco do Sul", #02/08/23 15:50
                          "thermo-grid-f4e11e8e1321" = "Almirante Tamandaré")) %>% #15/08/2023 11:45
   filter(Local == "Rio Branco do Sul" | Local == "Almirante Tamandaré") %>%
-  subset(localDate >= "2023-08-02" ) %>%#& localDate <= '2023-12-21'
+  subset(localDate >= as.Date("2023-08-02")) %>%#& localDate <= '2023-12-21'
   unique() %>%
   mutate(localDateTime = ymd_hm(paste0(localDate, " ", localTime))) %>%
   select(Local, localDateTime, so2, no2, o3, co, pm2p5, pm10,  rh)
 
 colnames(data_thermo) <- c('Cidade','date','SO2', 'NO2', 'O3', 'CO', 'PM2.5','PM10', 'rh_sensor')
+
+
+
+# Local time
+
+data_thermo <- data_thermo %>%
+  mutate(date = force_tz(date, tz = "America/Sao_Paulo"))
+
+
+
+
 
 
 #################### TO COMPARE WITH WHO, 2021 AQG

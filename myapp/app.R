@@ -764,19 +764,23 @@ server <- function(input, output) {
 
 
   meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv")
+  meteo <- meteo %>%
+    mutate(data = ifelse(str_detect(date, ":00"),
+                         as.character(date),
+                         paste(as.character(date), "00:00:00", sep = " "))) %>%
+    select(-date, -Local) %>%
+    mutate(data = ymd_hms(data, tz = "America/Sao_Paulo"))
 
   output$map_polarplot <- renderLeaflet({
     meteo <- meteo %>%
-      mutate(data = ifelse(str_detect(date, ":00"),
-                           as.character(date),
-                           paste(as.character(date), "00:00:00", sep = " "))) %>%
-      select(-date, -Local) %>%
       subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
       rename(date = data,
              Cidade = site)  %>%
       mutate(date = as_datetime(date),
              Cidade = case_when(Cidade == "Colombo" ~ "Almirante Tamandaré",
                                 TRUE ~ Cidade))
+
+
 
     week_new <- left_join(data_thermo_agg, meteo, by = c("Cidade", "date"))
     week_new <- week_new %>% mutate(Date = as.Date(date))

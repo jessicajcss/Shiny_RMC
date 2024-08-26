@@ -2,7 +2,7 @@
 ## https://community.purpleair.com/t/how-to-calculate-the-us-epa-pm2-5-aqi/877/12
 ## https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
 ## Last update: 2024-08-23
-
+library(tidyverse)
 
 
 
@@ -247,40 +247,36 @@ data <- dataaggfinal
 
 
 # Matching thermo data X legislation
-library(dplyr)
-library(zoo)
 
 w <- 8
 air_quality_data <- data %>%
   select(Cidade, date, SO2, NO2, O3, CO, PM2.5, PM10) %>%
   gather(key = variable, value = value, -c("Cidade", "date")) %>%
-  mutate(variable = factor(variable,
+  dplyr::mutate(variable = factor(variable,
                            levels=c('SO2', 'NO2', 'O3', 'CO',
                                     'PM10', 'PM2.5'))) %>%
-  mutate(date = as.POSIXct(date,
-                           format = "%Y-%m-%d %H:%M:%S")) %>%
-  group_by(Cidade, variable) %>%
-  mutate(Npoints = 1:n() - findInterval(date - hours(w), date),
+  dplyr::group_by(Cidade, variable) %>%
+  dplyr::mutate(Npoints = 1:n() - findInterval(date - hours(w), date),
          Mean8 = rollapplyr(value, Npoints, mean, partial = TRUE, fill = NA)) %>% #https://stackoverflow.com/questions/75686593/rolling-mean-of-time-series-with-missing-dates-in-r
-  ungroup() %>%
-  mutate(sample_day = as.Date(date, format = "%Y-%m-%d"),
-         Mean8 = case_when(Npoints < 8 | (variable != "O3" & variable != "CO") ~ NA, TRUE ~ Mean8)) %>%
-  dplyr::select(-date, -Npoints) %>%
-  group_by(Cidade, sample_day, variable) %>%
-  summarise(avg = mean(value, na.rm = T),
-            max8 = max(Mean8),
-            max = max(value, na.rm = T)) %>%
-  mutate(value = case_when(variable == "O3" ~ max8,
-                           variable == "CO" ~ max8,
-                           variable == "SO2" ~ max,
-                           variable == "NO2" ~ max,
-                           TRUE ~ avg)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(sample_day = as.Date(date, format = "%Y-%m-%d"),
+                Mean8 = case_when(Npoints < 8 | (variable != "O3" & variable != "CO") ~ NA, TRUE ~ Mean8)) %>%
+  mutate(value = case_when(variable == "O3" ~ Mean8,
+                           variable == "CO" ~ Mean8,
+                           TRUE ~ value)) %>%
+  dplyr::select(-date, -Npoints, -Mean8) %>%
+  drop_na() %>%
+  dplyr::group_by(Cidade, sample_day, variable) %>%
+  dplyr::mutate(value = case_when(variable == "O3" ~ max(value),
+                                  variable == "CO" ~ max(value),
+                                  variable == "SO2" ~ max(value),
+                                  variable == "NO2" ~ max(value),
+                                  TRUE ~ mean(value, na.rm = T))) %>%
   unique() %>%
   dplyr::select(Cidade, variable, sample_day, value) %>%
-  dcast(Cidade + sample_day ~ variable, value.var = "value") %>%
-  drop_na() %>%
-  rowwise() %>%
-  mutate(AQI_SO2 = aqiFromSO2(SO2),
+  tidyr::spread(key = variable, value = value) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(AQI_SO2 = aqiFromSO2(SO2),
          AQI_NO2 = aqiFromNO2(NO2),
          AQI_O3 = aqiFromO3(O3),
          AQI_CO = aqiFromCO(CO),
@@ -288,3 +284,4 @@ air_quality_data <- data %>%
          AQI_PM10 = aqiFromPM10(PM10),
          AQI = pmax(AQI_SO2, AQI_NO2, AQI_O3, AQI_CO, AQI_PM25, AQI_PM10),
          AQI_Qualidade = AQI_Qualidade(AQI))
+
