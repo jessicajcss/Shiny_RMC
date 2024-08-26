@@ -176,7 +176,7 @@ ui <- dashboardPage(
                   height = 430, width = '100%'))),
               fluidRow(
                 column(width=12,tags$h2(width=5,"Panorama da Pesquisa")),
-                box(width=12,HTML('<iframe width="100%" height="430" src="https://ai.invideo.io/watch/fY5jyjM1VR2"
+                box(width=12,HTML('<iframe width="100%" height="430" src="https://ai.invideo.io/watch/Kww5kLf-_lp"
                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media;
                        gyroscope; picture-in-picture" allowfullscreen></iframe>'))),
               br(),

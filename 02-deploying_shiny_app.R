@@ -5,9 +5,6 @@ library(shiny)
 
 runGist("41f1670fb03e5af65e56429638166bcb")
 
-
-
-
 ### GITHUB
 
 # https://github.com/RamiKrispin/shinylive-r
@@ -30,6 +27,13 @@ rsconnect::setAccountInfo(name='rmcqualidadedoar',
                           secret='<SECRET>')
 library(rsconnect)
 rsconnect::deployApp('./myapp')
+
+### Github error 403 on Shinyapps #https://github.com/satijalab/seurat-wrappers/issues/163
+usethis::create_github_token()
+
+remotes::install_github()
+
+usethis::edit_r_environ()
 
 ### BLOGDOWN
 
