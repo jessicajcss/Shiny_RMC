@@ -39,7 +39,7 @@
 library(tidyverse)
 library(dplyr)
 
-devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-preprocessing_thermo_insitu_data.R")
+source("./scripts/00-preprocessing_thermo_insitu_data.R")
 
 ### Dealing with outliers
 #### https://www.geeksforgeeks.org/how-to-remove-outliers-from-multiple-columns-in-r-dataframe/

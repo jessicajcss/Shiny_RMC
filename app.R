@@ -1,6 +1,5 @@
 # Based on https://github.com/Sarah-2510/R-Shiny-Project---AIR-QUALITY-INDEX/blob/main/Rshiny%20final.R
 # Last update: 2024-08-23
-#gs4_auth(cache = ".secrets", email = "jessicajcss@ufpr.com")
 
 library(shiny)
 library(shinydashboard)
@@ -28,11 +27,11 @@ library(zoo)
 #  --------------------------------------------------------------------------------------------------------
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
-devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/01-AQI_calculation_thermo_data.R")
 
+source("./scripts/01-AQI_calculation_thermo_data.R")
 
 # ---
-localizacao <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/locais_sensores.csv",
+localizacao <- read.csv("./data/locais_sensores.csv",
                         sep = ";")
 
 thermo_localizacao <- localizacao %>%
@@ -44,7 +43,7 @@ colnames(thermo_localizacao) <- c('Cidade', 'Latitude', 'Longitude')
 
 
 # ---
-meteo <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/meteo_hour.csv")
+meteo <- read.csv("./data/meteo_hour.csv")
 
 meteo <- meteo %>%
   mutate(data = ifelse(str_detect(date, ":00"),
@@ -408,7 +407,7 @@ server <- function(input, output) {
 
   # reading csv file containing precautions from pollutants
 
-  Poltab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/pollutants_table.csv")
+  Poltab <- read.csv("./data/pollutants_table.csv")
   pm2_5data <- Poltab[Poltab$Poluente == " PM2.5", ]
   pm10data <- Poltab[Poltab$Poluente == " PM10", ]
   no2data <- Poltab[Poltab$Poluente == " NO2", ]
@@ -502,7 +501,7 @@ server <- function(input, output) {
 
   # ------------------------------------------------------TAB1--------------------------------------------------
 
-  AQItab <- read.csv("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/04941d3078dd5e53233bab5253fad4ccc178bb7f/data/AQItab.csv")
+  AQItab <- read.csv("./data/AQItab.csv")
 
   output$tableAQI <- renderTable({AQItab}, #https://gallery.shinyapps.io/109-render-table/
                                  striped = TRUE,
@@ -727,7 +726,6 @@ server <- function(input, output) {
 
 
   # ----------------------------------------------------MAP FOR polarplots--------------------------------------------------
-  #source("00-data_wrangling.R")
 
 
   output$sites <- renderLeaflet({

@@ -6,28 +6,19 @@
 
 
 library(tidyverse)
-
-devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-supportR_library_github_ls.R")
-
 #Dados horários em UTC
-# https://stackoverflow.com/questions/35720660/how-to-use-an-r-script-from-github
-temp <- github_ls(repo = "https://github.com/jessicajcss/Shiny_RMC/tree/main/data/sensores_thermo/", # https://search.r-project.org/CRAN/refmans/supportR/html/github_ls.html
-                  recursive = TRUE, quiet = FALSE)
 
-path2 <- "./data/sensores_thermo"
-dir <- "https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/data/sensores_thermo"
-
-temp <- temp %>%
-  subset(path == path2) %>%
-  select(name) %>%
-  mutate(url = paste(dir, name, sep = "/"))
+temp <- list.files(path = "./data/sensores_thermo",
+                   pattern = "*.csv") # listar arquivos .csv do diretório
 
 
 
 # aplicar leitura das planilhas contidas na listagem temp
-
-myfiles <- lapply(temp$url,
-                  read.csv)
+dir <- "./data/sensores_thermo"
+temp.qualified <- paste(dir, temp, sep = "/")
+myfiles <- lapply(temp.qualified,
+                  read_delim,
+                  col_select = c(1:21))
 
 # checking if all data frames have the same column names
 my_func <- function(x,y) {
@@ -57,7 +48,7 @@ data_thermo <- data_thermo %>%
   filter(Local == "Rio Branco do Sul" | Local == "Almirante Tamandaré") %>%
   subset(localDate >= as.Date("2023-08-02")) %>%#& localDate <= '2023-12-21'
   unique() %>%
-  mutate(localDateTime = ymd_hm(paste0(localDate, " ", localTime))) %>%
+  mutate(localDateTime = ymd_hms(paste0(localDate, " ", localTime))) %>%
   select(Local, localDateTime, so2, no2, o3, co, pm2p5, pm10,  rh)
 
 colnames(data_thermo) <- c('Cidade','date','SO2', 'NO2', 'O3', 'CO', 'PM2.5','PM10', 'rh_sensor')

@@ -1,0 +1,12 @@
+name: analisededadso
+title: analisededadso
+username: rmcqualidadedoar
+account: rmcqualidadedoar
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12543960
+bundleId:
+url: https://rmcqualidadedoar.shinyapps.io/analisededadso/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

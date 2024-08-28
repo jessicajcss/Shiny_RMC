@@ -237,7 +237,7 @@ aqiFromO3 <- function(gas) {
 
 # dataset = dataaggfinal [file: thermo_insitu_RAWunit_hour.csv, script: 00-data_wrangling_thermo.R]
 
-devtools::source_url("https://raw.githubusercontent.com/jessicajcss/Shiny_RMC/main/00-data_wrangling_thermo.R")
+source("./scripts/00-data_wrangling_thermo.R")
 data <- dataaggfinal
 
 
