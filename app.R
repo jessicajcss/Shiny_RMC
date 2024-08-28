@@ -862,7 +862,7 @@ server <- function(input, output) {
       left_join(by_hour[,c(1,2,15)], ., by = c('Cidade', 'date')) %>%
       mutate(Date = ymd(date, tz = "America/Sao_Paulo") + hours(12))
 
-    by_hour %>%
+    plot_date <- by_hour %>%
       ggplot(aes(x=Date, group=1))+
       geom_bar(aes(y=prec*10,col="Precipitação"),fill="green",
                stat = "identity",alpha=0.5)+
@@ -876,10 +876,21 @@ server <- function(input, output) {
             legend.position = "bottom")+
       scale_y_continuous(sec.axis = sec_axis(~./10, name= "Precipitação em mm")) +
       labs(x="Dia de amostragem",y="Temperatura (ºC) \n Umidade Relativa (%)",colour = "Variável")+
-      scale_colour_manual(values = c("darkgreen","red","blue")) +
+      scale_colour_manual(values = c("darkgreen","red","blue"))
+
+
+    if ((as.Date(input$end_date2, tz = "America/Sao_Paulo") - as.Date(input$start_date2, tz = "America/Sao_Paulo")) <= 31) {
+      plot_date +
+        scale_x_datetime(
+          labels = scales::label_date_short(),  # automatically efficient date labels
+          breaks = "1 day")
+    } else {
+      plot_date +
       scale_x_datetime(
         labels = scales::label_date_short(),  # automatically efficient date labels
-        breaks = "1 month")
+        breaks = "1 month")}
+
+
   })
 
 
