@@ -47,7 +47,7 @@ AQI_Qualidade <- function(aqi) {
   } else if (aqi >= 0) {
     return("Boa")            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -75,7 +75,7 @@ aqiFromPM25 <- function(pm) {
   } else if (pm >= 0) {
     return(calcAQI(pm, 50, 0, 9, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -105,7 +105,7 @@ aqiFromPM10 <- function(pm) {
   } else if (pm >= 0) {
     return(calcAQI(pm, 50, 0, 54, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -134,7 +134,7 @@ aqiFromSO2 <- function(gas) {
   } else if (gas >= 0) {
     return(calcAQI(gas, 50, 0, 35, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -164,7 +164,7 @@ aqiFromNO2 <- function(gas) {
   } else if (gas >= 0) {
     return(calcAQI(gas, 50, 0, 53, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -195,7 +195,7 @@ aqiFromCO <- function(gas) {
   } else if (gas >= 0) {
     return(calcAQI(gas, 50, 0, 4.4, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -225,7 +225,7 @@ aqiFromO3 <- function(gas) {
   } else if (gas >= 0) {
     return(calcAQI(gas, 50, 0, 54, 0))            # Good
   } else {
-    return(undefined)
+    return(NA)
   }
 }
 
@@ -235,10 +235,8 @@ aqiFromO3 <- function(gas) {
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
 
-# dataset = dataaggfinal [file: thermo_insitu_RAWunit_hour.csv, script: 00-data_wrangling_thermo.R]
 
 source("./scripts/00-data_wrangling_thermo.R")
-data <- dataaggfinal
 
 
 #  --------------------------------------------------------------------------------------------------------
@@ -249,7 +247,7 @@ data <- dataaggfinal
 # Matching thermo data X legislation
 
 w <- 8
-air_quality_data <- data %>%
+air_quality_data <- dataaggfinal %>%
   select(Cidade, date, SO2, NO2, O3, CO, PM2.5, PM10) %>%
   gather(key = variable, value = value, -c("Cidade", "date")) %>%
   dplyr::mutate(variable = factor(variable,
@@ -259,9 +257,9 @@ air_quality_data <- data %>%
   dplyr::mutate(Npoints = 1:n() - findInterval(date - hours(w), date),
          Mean8 = rollapplyr(value, Npoints, mean, partial = TRUE, fill = NA)) %>% #https://stackoverflow.com/questions/75686593/rolling-mean-of-time-series-with-missing-dates-in-r
   dplyr::ungroup() %>%
-  dplyr::mutate(sample_day = as.Date(date, format = "%Y-%m-%d"),
+  dplyr::mutate(sample_day = as.Date(date, format = "%Y-%m-%d", , tz = "America/Sao_Paulo"),
                 Mean8 = case_when(Npoints < 8 | (variable != "O3" & variable != "CO") ~ NA, TRUE ~ Mean8)) %>%
-  mutate(value = case_when(variable == "O3" ~ Mean8,
+  dplyr::mutate(value = case_when(variable == "O3" ~ Mean8,
                            variable == "CO" ~ Mean8,
                            TRUE ~ value)) %>%
   dplyr::select(-date, -Npoints, -Mean8) %>%
@@ -275,13 +273,20 @@ air_quality_data <- data %>%
   unique() %>%
   dplyr::select(Cidade, variable, sample_day, value) %>%
   tidyr::spread(key = variable, value = value) %>%
+  replace(is.na(.), -999) %>% #WORKING AROUND NA VALUES
   dplyr::rowwise() %>%
   dplyr::mutate(AQI_SO2 = aqiFromSO2(SO2),
          AQI_NO2 = aqiFromNO2(NO2),
          AQI_O3 = aqiFromO3(O3),
          AQI_CO = aqiFromCO(CO),
          AQI_PM25 = aqiFromPM25(PM2.5),
-         AQI_PM10 = aqiFromPM10(PM10),
-         AQI = pmax(AQI_SO2, AQI_NO2, AQI_O3, AQI_CO, AQI_PM25, AQI_PM10),
+         AQI_PM10 = aqiFromPM10(PM10))  %>%
+  replace(.< 0, NA) %>%
+  #mutate_if(function(x) all(x < 0), function(x) NA)  %>%
+  dplyr::mutate(AQI = pmax(AQI_SO2, AQI_NO2, AQI_O3, AQI_CO, AQI_PM25, AQI_PM10, na.rm = T),
          AQI_Qualidade = AQI_Qualidade(AQI))
 
+
+
+saveRDS(air_quality_data, file="./data/air_quality_data.rds") #https://stackoverflow.com/questions/19967478/how-to-save-data-file-into-rdata
+saveRDS(data_thermo_agg, file="./data/air_quality_data_ugm3.rds")

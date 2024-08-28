@@ -1,5 +1,6 @@
 # Based on https://github.com/Sarah-2510/R-Shiny-Project---AIR-QUALITY-INDEX/blob/main/Rshiny%20final.R
-# Last update: 2024-08-23
+# Last update: 2024-08-28
+# attention to tz; # local path to files
 
 library(shiny)
 library(shinydashboard)
@@ -28,7 +29,10 @@ library(zoo)
 #                                              READING THE FILES
 #  --------------------------------------------------------------------------------------------------------
 
-source("./scripts/01-AQI_calculation_thermo_data.R")
+# UPDATE DATASET USING: source("./scripts/01-AQI_calculation_thermo_data.R")
+air_quality_data <- readRDS("./data/air_quality_data.rds")
+air_quality_data_ugm3 <- readRDS("./data/air_quality_data_ugm3.rds")
+
 
 # ---
 localizacao <- read.csv("./data/locais_sensores.csv",
@@ -54,7 +58,7 @@ meteo <- meteo %>%
   subset(site == "Rio Branco do Sul" | site == "Colombo") %>%
   rename(Date = data,
          Cidade = site)  %>%
-  mutate(Date = as_datetime(Date),
+  mutate(Date = as_datetime(Date, tz = "America/Sao_Paulo"),
          Cidade = case_when(Cidade == "Colombo" ~ "Almirante Tamandaré",
                             TRUE ~ Cidade))
 
@@ -365,10 +369,10 @@ server <- function(input, output) {
 
 
 
-    # --------------------------------------------------------CORRELATION MATRIX ----------------------------------------------------------
+  # --------------------------------------------------------CORRELATION MATRIX ----------------------------------------------------------
 
   output$corrcoeff <- renderPlot({
-    mydata2 <- data_thermo_agg %>%
+    mydata2 <- air_quality_data_ugm3 %>%
       mutate(Year = format(date,"%Y")) %>%
       filter(Year==input$years, Cidade==input$Cities)
     mydata <- mydata2[,c(3:8)]
@@ -380,7 +384,7 @@ server <- function(input, output) {
   # ------------------------------------------------------SCATTERPLOT CORRELATION-------------------------------------------------------
 
   output$corrscatt <- renderPlot({
-    mydata2 <- data_thermo_agg %>%
+    mydata2 <- air_quality_data_ugm3 %>%
       mutate(Year = format(date,"%Y")) %>%
       filter(Year==input$years, Cidade==input$Cities)
     mydata<-mydata2[,c(3:8)]
@@ -391,7 +395,7 @@ server <- function(input, output) {
   # -----------------------------------------------------------HEAT MAP-----------------------------------------------------------------
 
   output$heatmap <- renderPlot({
-    mydata2 <- data_thermo_agg %>%
+    mydata2 <- air_quality_data_ugm3 %>%
       mutate(Year = format(date,"%Y")) %>%
       filter(Year==input$years, Cidade==input$Cities)
     mydata<-mydata2[,c(3:8)] #ADD METEO
@@ -806,7 +810,7 @@ server <- function(input, output) {
   output$map_polarplot <- renderLeaflet({
       meteo %>%
       mutate(date = Date) %>%
-      left_join(data_thermo_agg, ., by = c("Cidade", "date")) %>%
+      left_join(air_quality_data_ugm3, ., by = c("Cidade", "date")) %>%
       mutate(date = as.Date(Date, tz = "America/Sao_Paulo"))  %>%
       subset(., between(date,
                         as.Date(input$start_date2, tz = "America/Sao_Paulo"),
@@ -823,7 +827,7 @@ server <- function(input, output) {
   output$wrose <- renderPlot({
       meteo %>%
       mutate(date = Date) %>%
-      left_join(data_thermo_agg, ., by = c("Cidade", "date")) %>%
+      left_join(air_quality_data_ugm3, ., by = c("Cidade", "date")) %>%
       mutate(date = as.Date(Date, tz = "America/Sao_Paulo"))  %>%
       subset(., between(date,
                         as.Date(input$start_date2, tz = "America/Sao_Paulo"),
@@ -844,7 +848,7 @@ server <- function(input, output) {
   output$dist <- renderPlot({
     by_hour <-  meteo %>%
       mutate(date = Date) %>%
-      left_join(data_thermo_agg, ., by = c("Cidade", "date")) %>%
+      left_join(air_quality_data_ugm3, ., by = c("Cidade", "date")) %>%
       mutate(date = as.Date(Date, tz = "America/Sao_Paulo"))  %>%
       subset(., between(date,
                         as.Date(input$start_date2, tz = "America/Sao_Paulo"),
@@ -856,7 +860,7 @@ server <- function(input, output) {
       dplyr::group_by(Cidade, date) %>%
       dplyr::summarize(umid = mean(umid, na.rm = T)) %>%
       left_join(by_hour[,c(1,2,15)], ., by = c('Cidade', 'date')) %>%
-      mutate(Date = ymd(date) + hours(12))
+      mutate(Date = ymd(date, tz = "America/Sao_Paulo") + hours(12))
 
     by_hour %>%
       ggplot(aes(x=Date, group=1))+
@@ -883,12 +887,14 @@ server <- function(input, output) {
 
   #------------------------------------------------------------TAB5------------------------------------------------------------
   #------------------------------------------------------------RAW DATA------------------------------------------------------------
-  output$downloadData <- downloadHandler(
+
+
+   output$downloadData <- downloadHandler(
     filename=function(){
       paste("DayData","csv", sep = '.')
     },
     content=function(file){
-      Datafinal = data_thermo_converted %>%
+      Datafinal = air_quality_data_ugm3 %>%
         mutate(Date = as.Date(date, tz = "America/Sao_Paulo")) %>%
         subset(Date >= input$start_date & Date <= input$end_date) %>%
         mutate(Date = date) %>%
@@ -898,10 +904,10 @@ server <- function(input, output) {
   )
 
   output$tableData <- renderTable(width = "70%",
-                                  data_thermo_agg %>%
+                                 i<- air_quality_data_ugm3 %>%
                                     mutate(Date = as.Date(date, tz = "America/Sao_Paulo")) %>%
                                     subset(Date >= input$start_date & Date <= input$end_date) %>%
-                                    mutate(data = as.character(as_datetime(date))) %>%
+                                    mutate(data = as.character(as_datetime(date, tz = "America/Sao_Paulo"))) %>%
                                     select(data, SO2:PM10) %>%
                                     mutate(date = ifelse(str_detect(data, ":00"),
                                                          as.character(data),

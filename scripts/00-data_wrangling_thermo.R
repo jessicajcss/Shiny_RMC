@@ -101,6 +101,7 @@ data_thermo <- data_thermo %>%
 
 
 
+
 ### Dealing with missing data - if a value is missing from 04:00 on a specific day, we’ll use the mean of the non-missing values taken at 04:00 on every other day.
 
 # hourly data
@@ -152,20 +153,20 @@ tdf2 <- tdf %>%
 tdf3 <- rbind(tdf, tdf2) %>%
   mutate(date = force_tz(date, tz = "America/Sao_Paulo"))
 
-
+tz(dataagg$date)
 
 dataaggfinal <- merge(dataagg, tdf3, by = c("Cidade", "date"), all.y = T)
 
 rm(tdf, tdf2, tdf3)
 
+tz(dataaggfinal$date)
 # days with missing values
 missing <- dataaggfinal %>%
-  mutate(datepaste = as.Date(date)) %>%
+  mutate(datepaste = as.Date(date, tz = "America/Sao_Paulo")) %>%
   select(Cidade, datepaste, PM2.5) %>%
   dplyr::group_by(Cidade, datepaste) %>%
-  filter(!is.na(PM2.5))  %>%
+  filter(is.na(PM2.5))  %>%
   count(Cidade, datepaste) %>%
-  filter(n > 0) %>%
   arrange(desc(n))
 
 # which ones are missing >= 10 hours of data
@@ -175,7 +176,7 @@ too_many_missing <- missing %>%
 
 # remove missing data
 dataaggfinal <- dataaggfinal %>%
-  mutate(LocalTime = paste(Cidade, date, sep = " ")) %>%
+  mutate(LocalTime = paste(Cidade, as.Date(date), sep = " ")) %>%
   filter(!(LocalTime %in% too_many_missing$LocalTime)) %>%
   dplyr::select(-LocalTime)
 
